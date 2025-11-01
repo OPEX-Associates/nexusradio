@@ -1,0 +1,297 @@
+<!DOCTYPE html><!DOCTYPE html>
+
+<html lang="en"><html lang="en">
+
+<head><head>
+
+    <meta charset="UTF-8">    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Icon Generator - راديو المغرب</title>    <title>Icon Generator - راديو المغرب</title>
+
+    <style>    <style>
+
+        body {        body {
+
+            font-family: Arial, sans-serif;            font-family: Arial, sans-serif;
+
+            display: flex;            display: flex;
+
+            justify-content: center;            justify-content: center;
+
+            align-items: center;            align-items: center;
+
+            min-height: 100vh;            min-height: 100vh;
+
+            margin: 0;            margin: 0;
+
+            background: linear-gradient(135deg, #c41e3a 0%, #006233 100%);            background: linear-gradient(135deg, #c41e3a 0%, #006233 100%);
+
+        }        }
+
+        .generator {        .generator {
+
+            background: white;            background: white;
+
+            padding: 2rem;            padding: 2rem;
+
+            border-radius: 10px;            border-radius: 10px;
+
+            text-align: center;            text-align: center;
+
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+
+        }        }
+
+        canvas {        canvas {
+
+            border: 2px solid #ddd;            border: 2px solid #ddd;
+
+            margin: 10px;            margin: 10px;
+
+            border-radius: 8px;            border-radius: 8px;
+
+        }        }
+
+        .download-links {        .download-links {
+
+            margin-top: 1rem;            margin-top: 1rem;
+
+        }        }
+
+        .download-links a {        .download-links a {
+
+            display: inline-block;            display: inline-block;
+
+            margin: 5px;            margin: 5px;
+
+            padding: 8px 15px;            padding: 8px 15px;
+
+            background: #c41e3a;            background: #c41e3a;
+
+            color: white;            color: white;
+
+            text-decoration: none;            text-decoration: none;
+
+            border-radius: 5px;            border-radius: 5px;
+
+        }        }
+
+        .download-links a:hover {        .download-links a:hover {
+
+            background: #a91830;            background: #a91830;
+
+        }        }
+
+    </style>    </style>
+
+</head></head>
+
+<body><body>
+
+    <div class="generator">    <div class="generator">
+
+        <h1>راديو المغرب - Icon Generator</h1>        <h1>راديو المغرب - Icon Generator</h1>
+
+        <p>Click the buttons below to download the app icons for the PWA:</p>        <p>Click the buttons below to download the app icons:</p>
+
+                
+
+        <div id="canvases"></div>        <div id="canvases"></div>
+
+                
+
+        <div class="download-links" id="downloadLinks"></div>        <div class="download-links" id="downloadLinks"></div>
+
+                
+
+        <script>        <script>
+
+            const sizes = [24, 48, 192, 512];            const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+            const canvasesDiv = document.getElementById('canvases');            const canvasesDiv = document.getElementById('canvases');
+
+            const downloadLinksDiv = document.getElementById('downloadLinks');            const downloadLinksDiv = document.getElementById('downloadLinks');
+
+                        
+
+            sizes.forEach(size => {            sizes.forEach(size => {
+
+                // Create canvas                // Create canvas
+
+                const canvas = document.createElement('canvas');                const canvas = document.createElement('canvas');
+
+                canvas.width = size;                canvas.width = size;
+
+                canvas.height = size;                canvas.height = size;
+
+                canvas.style.width = '100px';                canvas.style.width = '100px';
+
+                canvas.style.height = '100px';                canvas.style.height = '100px';
+
+                canvasesDiv.appendChild(canvas);                canvasesDiv.appendChild(canvas);
+
+                                
+
+                const ctx = canvas.getContext('2d');                const ctx = canvas.getContext('2d');
+
+                                
+
+                // Draw icon                // Draw icon
+
+                drawIcon(ctx, size);                drawIcon(ctx, size);
+
+                                
+
+                // Create download link                // Create download link
+
+                const link = document.createElement('a');                const link = document.createElement('a');
+
+                link.href = canvas.toDataURL('image/png');                link.href = canvas.toDataURL('image/png');
+
+                link.download = `${size}x${size}.png`;                link.download = `icon-${size}x${size}.png`;
+
+                link.textContent = `${size}x${size}`;                link.textContent = `${size}x${size}`;
+
+                downloadLinksDiv.appendChild(link);                downloadLinksDiv.appendChild(link);
+
+            });            });
+
+                        
+
+            function drawIcon(ctx, size) {            function drawIcon(ctx, size) {
+
+                // Background gradient                // Background gradient
+
+                const gradient = ctx.createLinearGradient(0, 0, size, size);                const gradient = ctx.createLinearGradient(0, 0, size, size);
+
+                gradient.addColorStop(0, '#c41e3a');                gradient.addColorStop(0, '#c41e3a');
+
+                gradient.addColorStop(1, '#006233');                gradient.addColorStop(1, '#006233');
+
+                                
+
+                ctx.fillStyle = gradient;                ctx.fillStyle = gradient;
+
+                ctx.fillRect(0, 0, size, size);                ctx.fillRect(0, 0, size, size);
+
+                                
+
+                // Radio waves                // Radio waves
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+
+                ctx.lineWidth = size * 0.02;                ctx.lineWidth = size * 0.02;
+
+                                
+
+                const centerX = size * 0.3;                const centerX = size * 0.3;
+
+                const centerY = size * 0.7;                const centerY = size * 0.7;
+
+                                
+
+                for (let i = 1; i <= 3; i++) {                for (let i = 1; i <= 3; i++) {
+
+                    ctx.beginPath();                    ctx.beginPath();
+
+                    ctx.arc(centerX, centerY, size * 0.15 * i, -Math.PI/4, Math.PI/4);                    ctx.arc(centerX, centerY, size * 0.15 * i, -Math.PI/4, Math.PI/4);
+
+                    ctx.stroke();                    ctx.stroke();
+
+                }                }
+
+                                
+
+                // Antenna                // Antenna
+
+                ctx.strokeStyle = '#ffd700';                ctx.strokeStyle = '#ffd700';
+
+                ctx.lineWidth = size * 0.04;                ctx.lineWidth = size * 0.04;
+
+                ctx.beginPath();                ctx.beginPath();
+
+                ctx.moveTo(centerX, centerY);                ctx.moveTo(centerX, centerY);
+
+                ctx.lineTo(centerX - size * 0.1, centerY - size * 0.3);                ctx.lineTo(centerX - size * 0.1, centerY - size * 0.3);
+
+                ctx.stroke();                ctx.stroke();
+
+                                
+
+                // Radio body                // Radio body
+
+                ctx.fillStyle = '#2c3e50';                ctx.fillStyle = '#2c3e50';
+
+                ctx.fillRect(size * 0.4, size * 0.4, size * 0.5, size * 0.35);                ctx.fillRect(size * 0.4, size * 0.4, size * 0.5, size * 0.35);
+
+                                
+
+                // Screen                // Screen
+
+                ctx.fillStyle = '#34495e';                ctx.fillStyle = '#34495e';
+
+                ctx.fillRect(size * 0.45, size * 0.45, size * 0.4, size * 0.15);                ctx.fillRect(size * 0.45, size * 0.45, size * 0.4, size * 0.15);
+
+                                
+
+                // Speaker grille                // Speaker grille
+
+                ctx.fillStyle = '#1a252f';                ctx.fillStyle = '#1a252f';
+
+                for (let i = 0; i < 8; i++) {                for (let i = 0; i < 8; i++) {
+
+                    const y = size * 0.65 + (i * size * 0.015);                    const y = size * 0.65 + (i * size * 0.015);
+
+                    ctx.fillRect(size * 0.45, y, size * 0.4, size * 0.008);                    ctx.fillRect(size * 0.45, y, size * 0.4, size * 0.008);
+
+                }                }
+
+                                
+
+                // Knob                // Knob
+
+                ctx.fillStyle = '#ffd700';                ctx.fillStyle = '#ffd700';
+
+                ctx.beginPath();                ctx.beginPath();
+
+                ctx.arc(size * 0.8, size * 0.52, size * 0.04, 0, Math.PI * 2);                ctx.arc(size * 0.8, size * 0.52, size * 0.04, 0, Math.PI * 2);
+
+                ctx.fill();                ctx.fill();
+
+                                
+
+                // Flag emoji effect                // Flag emoji effect
+
+                ctx.font = `${size * 0.2}px Arial`;                ctx.font = `${size * 0.2}px Arial`;
+
+                ctx.textAlign = 'right';                ctx.textAlign = 'right';
+
+                ctx.fillStyle = 'white';                ctx.fillStyle = 'white';
+
+                ctx.fillText('🇲🇦', size * 0.9, size * 0.25);                ctx.fillText('🇲🇦', size * 0.9, size * 0.25);
+
+            }            }
+
+                        
+
+            // Auto-download all icons            // Auto-download all icons
+
+            setTimeout(() => {            setTimeout(() => {
+
+                downloadLinksDiv.querySelectorAll('a').forEach((link, index) => {                downloadLinksDiv.querySelectorAll('a').forEach((link, index) => {
+
+                    setTimeout(() => link.click(), index * 100);                    setTimeout(() => link.click(), index * 100);
+
+                });                });
+
+            }, 1000);            }, 1000);
+
+        </script>        </script>
+
+    </div>    </div>
+
+</body></body>
+
+</html></html>
