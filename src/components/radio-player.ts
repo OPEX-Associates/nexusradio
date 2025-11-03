@@ -14,29 +14,8 @@ export class RadioPlayer extends LitElement {
       direction: rtl;
       text-align: right;
       min-height: 100vh;
-      position: relative;
-    }
-
-    :host::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      z-index: -2;
-    }
-
-    :host::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 200vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-      z-index: -1;
+      background-attachment: fixed;
     }
 
     .player-container {
@@ -765,6 +744,11 @@ export class RadioPlayer extends LitElement {
     }
 
     /* Dark Mode Styles */
+    :host(.dark-mode) {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      background-attachment: fixed;
+    }
+
     :host(.dark-mode) .player-container {
       background: #1a1a1a;
       color: #ffffff;
@@ -1037,6 +1021,9 @@ export class RadioPlayer extends LitElement {
   private showHelp: boolean = false;
 
   @state()
+  private showAdmin: boolean = false;
+
+  @state()
   private useEmojiIcons: boolean = true;
 
   private radioService = new RadioService();
@@ -1268,7 +1255,17 @@ export class RadioPlayer extends LitElement {
           event.preventDefault();
           this.toggleHelp();
         }
+        if (this.showAdmin) {
+          event.preventDefault();
+          this.toggleAdmin();
+        }
         break;
+    }
+
+    // Admin panel trigger (Ctrl+Shift+A)
+    if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'a') {
+      event.preventDefault();
+      this.toggleAdmin();
     }
   }
 
@@ -1318,6 +1315,13 @@ export class RadioPlayer extends LitElement {
   private toggleHelp() {
     this.showHelp = !this.showHelp;
     this.analytics.trackFeatureUse(`help_${this.showHelp ? 'opened' : 'closed'}`);
+  }
+
+  private toggleAdmin() {
+    this.showAdmin = !this.showAdmin;
+    if (this.showAdmin) {
+      this.analytics.trackFeatureUse('admin_panel_opened');
+    }
   }
 
   private async handleShare() {

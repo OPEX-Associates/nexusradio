@@ -4,6 +4,7 @@ export interface RadioStation {
   nameEn: string;
   url: string;
   fallbackUrl?: string;
+  alternativeUrls?: string[];
   logo: string;
   iconClass?: string;
   description: string;
@@ -110,8 +111,13 @@ export class RadioService extends EventTarget {
       this.audioPlayer.currentTime = 0;
       this.audioPlayer.src = '';
       
-      // Try primary URL first
-      await this.tryPlayUrl(this.state.currentStation.url);
+      // For Chaine Inter, try multiple URLs due to streaming issues
+      if (this.state.currentStation.id === 'snrt_inter') {
+        await this.tryMultipleUrls();
+      } else {
+        // Try primary URL first for other stations
+        await this.tryPlayUrl(this.state.currentStation.url);
+      }
       
     } catch (error) {
       console.error('Primary URL failed:', error);
@@ -127,6 +133,35 @@ export class RadioService extends EventTarget {
         }
       } else {
         this.handlePlayError();
+      }
+    }
+  }
+
+  private async tryMultipleUrls(): Promise<void> {
+    const station = this.state.currentStation!;
+    const allUrls = [
+      station.url,
+      ...(station.alternativeUrls || []),
+      ...(station.fallbackUrl ? [station.fallbackUrl] : [])
+    ];
+
+    console.log(`Trying ${allUrls.length} URLs for ${station.name}...`);
+
+    for (let i = 0; i < allUrls.length; i++) {
+      const url = allUrls[i];
+      console.log(`Attempting URL ${i + 1}/${allUrls.length}: ${url}`);
+      
+      try {
+        await this.tryPlayUrl(url);
+        console.log(`Success with URL ${i + 1}: ${url}`);
+        return; // Success, exit the loop
+      } catch (error) {
+        console.error(`URL ${i + 1} failed:`, error);
+        if (i === allUrls.length - 1) {
+          // All URLs failed
+          throw new Error('All stream URLs failed');
+        }
+        // Continue to next URL
       }
     }
   }
@@ -341,11 +376,17 @@ export const radioStations: RadioStation[] = [
     id: 'snrt_inter',
     name: 'إذاعة شاين إنتر',
     nameEn: 'SNRT Chaine Inter',
-    url: 'https://snrt-inter.ice.infomaniak.ch/snrt-inter.mp3',
-    fallbackUrl: 'https://cdn.live.easybroadcast.io/live/radio_inter/l_11765_73032021_10852.aac',
+    url: 'https://radiointer.ice.infomaniak.ch/radiointer-high.mp3',
+    fallbackUrl: 'https://stream.radio.co/s38fef8c13/listen',
     logo: '🇲🇦',
     iconClass: 'fas fa-flag',
-    description: 'الإذاعة الوطنية المغربية • Moroccan National Radio'
+    description: 'الإذاعة الوطنية المغربية • Moroccan National Radio',
+    alternativeUrls: [
+      'https://stream.radiointer.ma/radiointer',
+      'https://listen.radioking.com/radio/52812/stream/93256',
+      'https://chaineinter.radioca.st/stream',
+      'http://stream.radiointer.ma:8000/radiointer'
+    ]
   },
   {
     id: 'radio_mars',
