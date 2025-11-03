@@ -376,15 +376,16 @@ export const radioStations: RadioStation[] = [
     id: 'snrt_inter',
     name: 'إذاعة شاين إنتر',
     nameEn: 'SNRT Chaine Inter',
-    url: 'https://radiointer.ice.infomaniak.ch/radiointer-high.mp3',
-    fallbackUrl: 'https://stream.radio.co/s38fef8c13/listen',
+    url: 'https://stream.zeno.fm/7wtwuby8vzruv',
+    fallbackUrl: 'https://listen.radioking.com/radio/52812/stream/93256',
     logo: '🇲🇦',
     iconClass: 'fas fa-flag',
     description: 'الإذاعة الوطنية المغربية • Moroccan National Radio',
     alternativeUrls: [
-      'https://stream.radiointer.ma/radiointer',
-      'https://listen.radioking.com/radio/52812/stream/93256',
+      'https://radio.snrtlive.ma/SNRT-INTER/tracks-v1a1/mono.m3u8',
+      'https://stream.radiointer.ma/radiointer.mp3',
       'https://chaineinter.radioca.st/stream',
+      'https://streaming.radio.co/s38fef8c13/listen',
       'http://stream.radiointer.ma:8000/radiointer'
     ]
   },

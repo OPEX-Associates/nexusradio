@@ -1053,6 +1053,25 @@ export class RadioPlayer extends LitElement {
     
     // Check emoji support and enable FontAwesome fallback if needed
     this.checkEmojiSupport();
+
+    // Add global debugging function for testing streams
+    (window as any).testRadioStream = async (url: string) => {
+      console.log(`Testing stream: ${url}`);
+      const audio = new Audio();
+      return new Promise((resolve, reject) => {
+        audio.addEventListener('canplay', () => {
+          console.log(`✅ Stream works: ${url}`);
+          audio.pause();
+          resolve(true);
+        });
+        audio.addEventListener('error', (e) => {
+          console.log(`❌ Stream failed: ${url}`, e);
+          reject(e);
+        });
+        audio.src = url;
+        audio.load();
+      });
+    };
   }
 
   disconnectedCallback() {
