@@ -298,7 +298,7 @@ export const radioStations: RadioStation[] = [
     url: 'https://a5.asurahosting.com:7980/radio.mp3',
     logo: '📡',
     iconClass: 'fas fa-broadcast-tower',
-    description: 'راديو إم إف إم المغربي'
+    description: 'راديو إم إف إم المغربي • Moroccan MFM Radio'
   },
   {
     id: 'hit_radio',
@@ -307,7 +307,7 @@ export const radioStations: RadioStation[] = [
     url: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3',
     logo: '🎶',
     iconClass: 'fas fa-music',
-    description: 'موسيقى عصرية ومتنوعة'
+    description: 'موسيقى عصرية ومتنوعة • Modern & Diverse Music'
   },
   {
     id: 'atlantic_radio',
@@ -317,16 +317,16 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://str0.creacast.com/atlantic',
     logo: '🌊',
     iconClass: 'fas fa-wave-square',
-    description: 'راديو أطلنطيك من المغرب'
+    description: 'راديو أطلنطيك من المغرب • Atlantic Radio Morocco'
   },
   {
     id: 'uradio',
     name: 'يو راديو',
-    nameEn: 'Uradio',
+    nameEn: 'U Radio',
     url: 'https://uradio-aac.ice.infomaniak.ch/uradio.aac',
     logo: '🔥',
     iconClass: 'fas fa-fire',
-    description: 'راديو الشباب المغربي'
+    description: 'راديو الشباب المغربي • Moroccan Youth Radio'
   },
   {
     id: 'aswat',
@@ -335,7 +335,7 @@ export const radioStations: RadioStation[] = [
     url: 'https://aswat.ice.infomaniak.ch/aswat-high.mp3',
     logo: '🎙️',
     iconClass: 'fas fa-microphone',
-    description: 'برامج ثقافية ومتنوعة'
+    description: 'برامج ثقافية ومتنوعة • Cultural & Diverse Programs'
   },
   {
     id: 'snrt_inter',
@@ -345,7 +345,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://cdn.live.easybroadcast.io/live/radio_inter/l_11765_73032021_10852.aac',
     logo: '🇲🇦',
     iconClass: 'fas fa-flag',
-    description: 'الإذاعة الوطنية المغربية'
+    description: 'الإذاعة الوطنية المغربية • Moroccan National Radio'
   },
   {
     id: 'radio_mars',
@@ -355,7 +355,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://mars.ice.infomaniak.ch/mars-128.mp3',
     logo: '🔴',
     iconClass: 'fas fa-globe-africa',
-    description: 'راديو مارس المغربي'
+    description: 'راديو مارس المغربي • Mars Radio Morocco'
   },
 
   // French Radio Stations
@@ -367,7 +367,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://rtl.ice.infomaniak.ch/rtl-fr-high.mp3',
     logo: '🇫🇷',
     iconClass: 'fas fa-tower-broadcast',
-    description: 'راديو آر تي إل الفرنسي'
+    description: 'راديو آر تي إل الفرنسي • French RTL Radio'
   },
   {
     id: 'europe1',
@@ -377,7 +377,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://stream.europe1.fr/europe1.mp3',
     logo: '📻',
     iconClass: 'fas fa-satellite-dish',
-    description: 'راديو أوروبا 1 الفرنسي'
+    description: 'راديو أوروبا 1 الفرنسي • Europe 1 French Radio'
   },
   {
     id: 'rfi_monde',
@@ -387,7 +387,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://live02.rfi.fr/rfienmandarin-64.mp3',
     logo: '🌍',
     iconClass: 'fas fa-globe',
-    description: 'راديو فرنسا الدولية'
+    description: 'راديو فرنسا الدولية • Radio France International'
   },
   {
     id: 'france_inter',
@@ -397,7 +397,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://icecast.radiofrance.fr/franceinter-midfi.mp3',
     logo: '🎭',
     iconClass: 'fas fa-theater-masks',
-    description: 'راديو فرنسا إنتر'
+    description: 'راديو فرنسا إنتر • France Inter Radio'
   },
 
   // Talk Radio Stations
@@ -409,7 +409,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_world_service.m3u8',
     logo: '📰',
     iconClass: 'fas fa-newspaper',
-    description: 'خدمة بي بي سي العالمية'
+    description: 'خدمة بي بي سي العالمية • BBC World Service'
   },
   {
     id: 'cnn_radio',
@@ -419,7 +419,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://streams.cnn.com/cnn-radio',
     logo: '📺',
     iconClass: 'fas fa-tv',
-    description: 'أخبار سي إن إن'
+    description: 'أخبار سي إن إن • CNN News Radio'
   },
   {
     id: 'npr_news',
@@ -429,7 +429,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://stream.npr.org/npr-news.mp3',
     logo: '🗞️',
     iconClass: 'fas fa-file-alt',
-    description: 'راديو الأخبار العامة'
+    description: 'راديو الأخبار العامة • National Public Radio'
   },
   {
     id: 'radio_24',
@@ -439,7 +439,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://radio24.ilsole24ore.com/radio24.mp3',
     logo: '⏰',
     iconClass: 'fas fa-clock',
-    description: 'أخبار على مدار الساعة'
+    description: 'أخبار على مدار الساعة • 24/7 News Coverage'
   },
 
   // Music & Entertainment
@@ -451,7 +451,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://streams.fluxfm.de/Lounge/mp3-320',
     logo: '🎧',
     iconClass: 'fas fa-headphones',
-    description: 'موسيقى هادئة للاسترخاء'
+    description: 'موسيقى هادئة للاسترخاء • Relaxing Lo-Fi Music'
   },
   {
     id: 'jazz_station',
@@ -461,7 +461,7 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://streaming.exclusive.radio/jazz/128',
     logo: '🎷',
     iconClass: 'fas fa-drum',
-    description: 'موسيقى الجاز الكلاسيكية'
+    description: 'موسيقى الجاز الكلاسيكية • Classical Jazz Music'
   },
   {
     id: 'classical_music',
@@ -471,6 +471,6 @@ export const radioStations: RadioStation[] = [
     fallbackUrl: 'https://streams.classical-music.com/classical-128.mp3',
     logo: '🎼',
     iconClass: 'fas fa-music',
-    description: 'موسيقى كلاسيكية راقية'
+    description: 'موسيقى كلاسيكية راقية • Elegant Classical Music'
   }
 ];

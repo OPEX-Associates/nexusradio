@@ -13,24 +13,58 @@ export class RadioPlayer extends LitElement {
       font-family: 'Noto Sans Arabic', sans-serif;
       direction: rtl;
       text-align: right;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    :host::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      z-index: -2;
+    }
+
+    :host::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 200vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+      z-index: -1;
     }
 
     .player-container {
       max-width: 480px;
       margin: 0 auto;
-      background: white;
+      background: transparent;
       min-height: 100vh;
       overflow: hidden;
+      position: relative;
+      padding-bottom: 120px;
     }
 
-    /* Header */
+    .player-container.no-player {
+      padding-bottom: 0;
+    }
+
+    /* Header with glassmorphism effect */
     .header {
-      background: linear-gradient(135deg, #c41e3a 0%, #a91830 100%);
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       color: white;
-      padding: 1rem;
+      padding: 1.5rem 1rem;
       text-align: center;
-      position: relative;
-      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     }
 
     .header-content {
@@ -466,25 +500,29 @@ export class RadioPlayer extends LitElement {
 
     /* Stations Section */
     .stations-section {
-      padding: 1rem;
-      background: #f8f9fa;
-      border-top: 1px solid #e9ecef;
+      padding: 2rem 1rem;
+      background: transparent;
+      border: none;
     }
 
     .stations-section h3 {
       text-align: center;
-      margin-bottom: 1rem;
-      color: #2c3e50;
-      font-weight: 600;
+      margin-bottom: 2rem;
+      color: white;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .test-section {
       text-align: center;
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     }
 
     .test-audio-btn {
@@ -515,19 +553,57 @@ export class RadioPlayer extends LitElement {
 
     .stations-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
     }
 
     .station-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1.5rem 1rem;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      border: 2px solid #e9ecef;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .station-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .station-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .station-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .station-card.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .station-card.active::before {
+      transform: scaleX(1);
+      background: rgba(255, 255, 255, 0.3);
+    }
       color: #2c3e50;
     }
 
@@ -568,6 +644,25 @@ export class RadioPlayer extends LitElement {
       font-weight: 600;
       margin: 0 0 0.25rem 0;
       color: #2c3e50;
+    }
+
+    .station-name-arabic {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.1rem;
+      direction: rtl;
+      text-align: right;
+      line-height: 1.2;
+    }
+
+    .station-name-english {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #6c757d;
+      direction: ltr;
+      text-align: left;
+      line-height: 1.1;
     }
 
     .station-card p {
@@ -732,6 +827,14 @@ export class RadioPlayer extends LitElement {
       color: #ffffff;
     }
 
+    :host(.dark-mode) .station-name-arabic {
+      color: #ffffff;
+    }
+
+    :host(.dark-mode) .station-name-english {
+      color: #b0b0b0;
+    }
+
     :host(.dark-mode) .station-card p {
       color: #b0b0b0;
     }
@@ -744,6 +847,155 @@ export class RadioPlayer extends LitElement {
     :host(.dark-mode) .spinner {
       border-color: #4a4a4a;
       border-top-color: #c41e3a;
+    }
+
+    /* Fixed Bottom Player */
+    .fixed-player {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px 20px 0 0;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 -8px 32px 0 rgba(31, 38, 135, 0.37);
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fixed-player.hidden {
+      transform: translateX(-50%) translateY(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .fixed-player-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .fixed-player .station-logo {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      flex-shrink: 0;
+      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', 'Android Emoji', 'EmojiSymbols', sans-serif;
+    }
+
+    .fixed-player-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fixed-player-info h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+      color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fixed-player .station-name-arabic {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.1rem;
+      direction: rtl;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fixed-player .station-name-english {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #666;
+      direction: ltr;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fixed-player-info p {
+      font-size: 0.8rem;
+      color: #666;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fixed-player-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .fixed-player .play-pause-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fixed-player .play-pause-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .fixed-player .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .fixed-player .volume-slider {
+      width: 60px;
+      height: 3px;
+    }
+
+    :host(.dark-mode) .fixed-player {
+      background: rgba(30, 30, 30, 0.95);
+    }
+
+    :host(.dark-mode) .fixed-player-info h4 {
+      color: white;
+    }
+
+    :host(.dark-mode) .fixed-player .station-name-arabic {
+      color: white;
+    }
+
+    :host(.dark-mode) .fixed-player .station-name-english {
+      color: #b0b0b0;
+    }
+
+    :host(.dark-mode) .fixed-player-info p {
+      color: #b0b0b0;
     }
 
     @media (max-width: 480px) {
@@ -832,9 +1084,9 @@ export class RadioPlayer extends LitElement {
     try {
       await this.radioService.selectStation(station);
       this.analytics.trackStationPlay(station.name);
-      this.notifications.success(`تم تشغيل ${station.name}`);
+      this.notifications.success(`تم تشغيل ${station.name} • Now playing ${station.nameEn}`);
     } catch (error) {
-      this.notifications.error(`فشل في تشغيل ${station.name}`);
+      this.notifications.error(`فشل في تشغيل ${station.name} • Failed to play ${station.nameEn}`);
       this.analytics.trackError('station_select_failed', station.name);
     }
   }
@@ -1132,7 +1384,7 @@ export class RadioPlayer extends LitElement {
 
   render() {
     return html`
-      <div class="player-container">
+      <div class="player-container ${!this.radioState.currentStation ? 'no-player' : ''}">
         <!-- Header -->
         <div class="header">
           <div class="header-content">
@@ -1164,79 +1416,78 @@ export class RadioPlayer extends LitElement {
           </div>
         </div>
 
-        <!-- Main Player -->
-        <div class="player-section">
-          <div class="current-station">
-            <div class="station-info">
-              <div class="station-logo">
-                ${this.radioState.currentStation ? this.renderStationIcon(this.radioState.currentStation) : html`<i class="fas fa-radio"></i>`}
-              </div>
-              <div class="station-details">
-                <h2>${this.radioState.currentStation?.name || 'اختر محطة راديو'}</h2>
-                <p>${this.getStatusText()}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="player-controls">
-            <button
-              class="play-btn ${this.radioState.isPlaying ? 'playing' : ''}"
-              ?disabled=${!this.radioState.currentStation}
-              @click=${this.handlePlayPause}
-            >
-              ${this.radioState.isPlaying ? 
-                this.renderIcon('fa-pause', '⏸️', 'إيقاف') : 
-                this.renderIcon('fa-play', '▶️', 'تشغيل')
-              }
-            </button>
-            <div class="volume-control">
-              ${this.renderIcon('fa-volume-down', '🔉', 'صوت منخفض')}
-              <input 
-                type="range" 
-                class="volume-slider"
-                min="0" 
-                max="100" 
-                .value=${this.radioState.volume.toString()}
-                @input=${this.handleVolumeChange}
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Stations List -->
+          <div class="stations-section">
+            <h3 class="section-title">المحطات المتاحة</h3>
+            <div class="test-section">
+              <button 
+                class="test-audio-btn"
+                style=${this.testButtonState === 'success' ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%)' : 
+                       this.testButtonState === 'failed' ? 'background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)' : ''}
+                @click=${this.handleTestAudio}
               >
-              ${this.renderIcon('fa-volume-up', '🔊', 'صوت عالي')}
+                ${this.getTestButtonContent()}
+              </button>
+              <p class="test-info">إذا لم تعمل المحطات، جرب اختبار الصوت أولاً</p>
             </div>
-          </div>
-
-          <div class="equalizer ${this.radioState.isPlaying ? 'active' : ''}">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
+            <div class="stations-grid">
+              ${radioStations.map(station => html`
+                <div 
+                  class="station-card ${this.radioState.currentStation?.id === station.id ? 'active' : ''}"
+                  @click=${() => this.handleStationSelect(station)}
+                >
+                  <div class="station-logo">${this.renderStationIcon(station)}</div>
+                  <h4>
+                    <div class="station-name-arabic">${station.name}</div>
+                    <div class="station-name-english">${station.nameEn}</div>
+                  </h4>
+                  <p>${station.description}</p>
+                </div>
+              `)}
+            </div>
           </div>
         </div>
 
-        <!-- Stations List -->
-        <div class="stations-section">
-          <h3>المحطات المتاحة</h3>
-          <div class="test-section">
-            <button 
-              class="test-audio-btn"
-              style=${this.testButtonState === 'success' ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%)' : 
-                     this.testButtonState === 'failed' ? 'background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)' : ''}
-              @click=${this.handleTestAudio}
-            >
-              ${this.getTestButtonContent()}
-            </button>
-            <p class="test-info">إذا لم تعمل المحطات، جرب اختبار الصوت أولاً</p>
-          </div>
-          <div class="stations-grid">
-            ${radioStations.map(station => html`
-              <div 
-                class="station-card ${this.radioState.currentStation?.id === station.id ? 'active' : ''}"
-                @click=${() => this.handleStationSelect(station)}
-              >
-                <div class="station-logo">${this.renderStationIcon(station)}</div>
-                <h4>${station.name}</h4>
-                <p>${station.description}</p>
+        <!-- Fixed Bottom Player -->
+        <div class="fixed-player ${!this.radioState.currentStation ? 'hidden' : ''}">
+          <div class="fixed-player-content">
+            <div class="station-logo">
+              ${this.radioState.currentStation ? this.renderStationIcon(this.radioState.currentStation) : ''}
+            </div>
+            <div class="fixed-player-info">
+              <h4>
+                ${this.radioState.currentStation ? html`
+                  <div class="station-name-arabic">${this.radioState.currentStation.name}</div>
+                  <div class="station-name-english">${this.radioState.currentStation.nameEn}</div>
+                ` : ''}
+              </h4>
+              <p>${this.getStatusText()}</p>
+            </div>
+            <div class="fixed-player-controls">
+              <div class="volume-control">
+                ${this.renderIcon('fa-volume-down', '🔉', 'صوت منخفض')}
+                <input 
+                  type="range" 
+                  class="volume-slider"
+                  min="0" 
+                  max="100" 
+                  .value=${this.radioState.volume.toString()}
+                  @input=${this.handleVolumeChange}
+                >
               </div>
-            `)}
+              <button
+                class="play-pause-btn"
+                ?disabled=${!this.radioState.currentStation}
+                @click=${this.handlePlayPause}
+              >
+                ${this.radioState.isPlaying ? 
+                  this.renderIcon('fa-pause', '⏸️', 'إيقاف') : 
+                  this.renderIcon('fa-play', '▶️', 'تشغيل')
+                }
+              </button>
+            </div>
           </div>
         </div>
 
