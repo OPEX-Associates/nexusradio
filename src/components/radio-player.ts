@@ -1608,7 +1608,6 @@ export class RadioPlayer extends LitElement {
         <div class="main-content">
           <!-- Stations List -->
           <div class="stations-section">
-            <h3 class="section-title">المحطات المتاحة</h3>
             <div class="station-toolbar">
               <label class="station-search">
                 <i class="fas fa-search" aria-hidden="true"></i>
@@ -1621,17 +1620,6 @@ export class RadioPlayer extends LitElement {
                 >
               </label>
               <span class="station-count" aria-live="polite">${visibleStations.length} / ${radioStations.length}</span>
-            </div>
-            <div class="test-section">
-              <button
-                class="test-audio-btn"
-                style=${this.testButtonState === 'success' ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%)' :
-                       this.testButtonState === 'failed' ? 'background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)' : ''}
-                @click=${this.handleTestAudio}
-              >
-                ${this.getTestButtonContent()}
-              </button>
-              <p class="test-info">إذا لم تعمل المحطات، جرب اختبار الصوت أولاً</p>
             </div>
             <div class="stations-grid">
               ${visibleStations.length === 0 ? html`<p class="test-info">لا توجد محطات مطابقة</p>` : visibleStations.map(station => html`
