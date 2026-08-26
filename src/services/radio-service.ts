@@ -32,7 +32,7 @@ export class RadioService extends EventTarget {
       isLoading: false,
       error: null
     };
-    
+
     this.setupAudioEvents();
   }
 
@@ -59,9 +59,9 @@ export class RadioService extends EventTarget {
   private handleError(e: Event) {
     console.error('Audio error:', e);
     const target = e.target as HTMLAudioElement;
-    
+
     let errorMessage = 'فشل في تشغيل المحطة.';
-    
+
     if (target?.error?.code) {
       switch (target.error.code) {
         case 1: // MEDIA_ERR_ABORTED
@@ -81,10 +81,10 @@ export class RadioService extends EventTarget {
       }
     }
 
-    this.updateState({ 
-      isPlaying: false, 
-      isLoading: false, 
-      error: errorMessage + ' جرب محطة أخرى.' 
+    this.updateState({
+      isPlaying: false,
+      isLoading: false,
+      error: errorMessage + ' جرب محطة أخرى.'
     });
   }
 
@@ -95,14 +95,14 @@ export class RadioService extends EventTarget {
     }
 
     this.updateState({ currentStation: station, error: null });
-    
+
     // Always start playing when selecting a new station
     await this.playStation();
   }
 
   async playStation() {
     if (!this.state.currentStation) return;
-    
+
     try {
       this.updateState({ isLoading: true, error: null });
 
@@ -126,7 +126,7 @@ export class RadioService extends EventTarget {
     for (let i = 0; i < allUrls.length; i++) {
       const url = allUrls[i];
       console.log(`Attempting URL ${i + 1}/${allUrls.length}: ${url}`);
-      
+
       try {
         await this.tryPlayUrl(url);
         console.log(`Success with URL ${i + 1}: ${url}`);
@@ -146,20 +146,20 @@ export class RadioService extends EventTarget {
     return new Promise((resolve, reject) => {
       const audio = this.audioPlayer;
       let timeoutId: ReturnType<typeof setTimeout> | undefined;
-      
+
       const onCanPlay = () => {
         cleanup();
         audio.volume = this.state.volume / 100;
         audio.play().then(resolve).catch(reject);
       };
-      
+
       const onError = (e: Event) => {
         cleanup();
         console.log(`Failed to load URL: ${url}`);
         console.log('Error details:', e);
         reject(new Error(`Failed to load: ${(e as any).type}`));
       };
-      
+
       const cleanup = () => {
         audio.removeEventListener('canplay', onCanPlay);
         audio.removeEventListener('error', onError);
@@ -169,15 +169,15 @@ export class RadioService extends EventTarget {
       audio.pause();
       audio.currentTime = 0;
       audio.src = '';
-      
+
       // Add temporary event listeners
       audio.addEventListener('canplay', onCanPlay, { once: true });
       audio.addEventListener('error', onError, { once: true });
-      
+
       // Set source and load
       audio.src = url;
       audio.load();
-      
+
       // Timeout after 15 seconds
       timeoutId = setTimeout(() => {
         cleanup();
@@ -196,7 +196,7 @@ export class RadioService extends EventTarget {
 
   async togglePlayPause() {
     if (!this.state.currentStation) return;
-    
+
     if (this.state.isPlaying) {
       this.audioPlayer.pause();
     } else {
@@ -251,7 +251,7 @@ export class RadioService extends EventTarget {
   private switchToPreviousStation() {
     const stations = radioStations;
     if (!this.state.currentStation) return;
-    
+
     const currentIndex = stations.findIndex(s => s.id === this.state.currentStation!.id);
     const previousIndex = currentIndex > 0 ? currentIndex - 1 : stations.length - 1;
     this.selectStation(stations[previousIndex]);
@@ -260,7 +260,7 @@ export class RadioService extends EventTarget {
   private switchToNextStation() {
     const stations = radioStations;
     if (!this.state.currentStation) return;
-    
+
     const currentIndex = stations.findIndex(s => s.id === this.state.currentStation!.id);
     const nextIndex = currentIndex < stations.length - 1 ? currentIndex + 1 : 0;
     this.selectStation(stations[nextIndex]);
@@ -276,28 +276,28 @@ export class RadioService extends EventTarget {
       const testUrl = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
       const testAudio = new Audio();
       testAudio.volume = 0.1;
-      
+
       await new Promise((resolve, reject) => {
         const timeout = setTimeout(() => reject(new Error('Test timeout')), 5000);
-        
+
         testAudio.addEventListener('canplay', () => {
           clearTimeout(timeout);
           resolve(undefined);
         }, { once: true });
-        
+
         testAudio.addEventListener('error', (e) => {
           clearTimeout(timeout);
           reject(e);
         }, { once: true });
-        
+
         testAudio.src = testUrl;
         testAudio.load();
       });
-      
+
       await testAudio.play();
       testAudio.pause();
       testAudio.src = '';
-      
+
       return true;
     } catch (error) {
       console.error('Audio test failed:', error);

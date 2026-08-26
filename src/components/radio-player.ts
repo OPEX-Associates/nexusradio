@@ -300,7 +300,7 @@ export class RadioPlayer extends LitElement {
     .use-fallback-icons .emoji-icon {
       display: none;
     }
-    
+
     .use-fallback-icons .icon-fallback {
       display: inline-block !important;
     }
@@ -810,15 +810,15 @@ export class RadioPlayer extends LitElement {
     .fas, .fa, [class*="fa-"] {
       color: inherit;
     }
-    
+
     .station-logo .fas, .station-logo .fa {
       color: white;
     }
-    
+
     .play-btn .fas, .play-btn .fa {
       color: white;
     }
-    
+
     .header .fas, .header .fa {
       color: #ffd700;
     }
@@ -1094,16 +1094,16 @@ export class RadioPlayer extends LitElement {
       .stations-grid {
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       }
-      
+
       .player-controls {
         gap: 1rem;
       }
-      
+
       .volume-control {
         flex-direction: column;
         gap: 0.25rem;
       }
-      
+
       .volume-slider {
         width: 80px;
       }
@@ -1150,7 +1150,7 @@ export class RadioPlayer extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.radioService.addEventListener('statechange', this.boundStateChangeHandler);
-    
+
     // Check for saved dark mode preference
     const savedDarkMode = localStorage.getItem('nexus-radio-dark-mode');
     this.isDarkMode = savedDarkMode === 'true';
@@ -1177,10 +1177,10 @@ export class RadioPlayer extends LitElement {
 
     // Add keyboard shortcuts
     document.addEventListener('keydown', this.boundKeyboardShortcutsHandler);
-    
+
     // Add visibility change handler for background playback
     document.addEventListener('visibilitychange', this.boundVisibilityChangeHandler);
-    
+
     // Check emoji support and enable FontAwesome fallback if needed
     this.checkEmojiSupport();
 
@@ -1272,11 +1272,11 @@ export class RadioPlayer extends LitElement {
 
   private async handleTestAudio() {
     this.testButtonState = 'testing';
-    
+
     try {
       const success = await this.radioService.testAudio();
       this.testButtonState = success ? 'success' : 'failed';
-      
+
       setTimeout(() => {
         this.testButtonState = 'idle';
       }, 2000);
@@ -1329,11 +1329,11 @@ export class RadioPlayer extends LitElement {
     canvas.width = canvas.height = 10;
     ctx.textBaseline = 'top';
     ctx.font = '8px Arial';
-    
+
     // Test with a common emoji
     ctx.fillText('🎵', 0, 0);
     const emojiData = ctx.getImageData(0, 0, 10, 10).data;
-    
+
     // Check if anything was actually drawn (not just blank)
     let hasContent = false;
     for (let i = 3; i < emojiData.length; i += 4) {
@@ -1342,7 +1342,7 @@ export class RadioPlayer extends LitElement {
         break;
       }
     }
-    
+
     // If emojis don't render properly, use FontAwesome
     if (!hasContent) {
       this.classList.add('use-fallback-icons');
@@ -1359,13 +1359,13 @@ export class RadioPlayer extends LitElement {
     testIcon.style.position = 'absolute';
     testIcon.style.left = '-9999px';
     document.body.appendChild(testIcon);
-    
+
     setTimeout(() => {
       const computedStyle = window.getComputedStyle(testIcon, '::before');
       const content = computedStyle.getPropertyValue('content');
-      
+
       document.body.removeChild(testIcon);
-      
+
       // If FontAwesome isn't loaded properly, add a fallback
       if (!content || content === 'none' || content === '""') {
         console.warn('FontAwesome not loaded properly, using symbol fallbacks');
@@ -1468,7 +1468,7 @@ export class RadioPlayer extends LitElement {
   private switchToNextStation() {
     const stations = radioStations;
     if (!this.radioState.currentStation) return;
-    
+
     const currentIndex = stations.findIndex(s => s.id === this.radioState.currentStation!.id);
     const nextIndex = currentIndex < stations.length - 1 ? currentIndex + 1 : 0;
     this.handleStationSelect(stations[nextIndex]);
@@ -1477,14 +1477,14 @@ export class RadioPlayer extends LitElement {
   private switchToPreviousStation() {
     const stations = radioStations;
     if (!this.radioState.currentStation) return;
-    
+
     const currentIndex = stations.findIndex(s => s.id === this.radioState.currentStation!.id);
     const previousIndex = currentIndex > 0 ? currentIndex - 1 : stations.length - 1;
     this.handleStationSelect(stations[previousIndex]);
   }
 
   private savedVolume = 70;
-  
+
   private toggleMute() {
     if (this.radioState.volume > 0) {
       this.savedVolume = this.radioState.volume;
@@ -1512,7 +1512,7 @@ export class RadioPlayer extends LitElement {
       if (currentStation) {
         const result = await SharingService.shareStation(currentStation.name);
         this.analytics.trackFeatureUse(`share_station_${result}`);
-        
+
         if (result === true) {
           this.notifications.success('تم مشاركة المحطة بنجاح!');
         } else if (result === 'clipboard') {
@@ -1523,7 +1523,7 @@ export class RadioPlayer extends LitElement {
       } else {
         const result = await SharingService.shareApp();
         this.analytics.trackFeatureUse(`share_app_${result}`);
-        
+
         if (result === true) {
           this.notifications.success('تم مشاركة التطبيق بنجاح!');
         } else if (result === 'clipboard') {
@@ -1588,14 +1588,14 @@ export class RadioPlayer extends LitElement {
                 ${this.renderIcon('fa-question', '❓', 'مساعدة')}
               </button>
               <button class="dark-mode-toggle" @click=${this.toggleIconStyle} title="تبديل نوع الأيقونات">
-                ${this.useEmojiIcons ? 
-                  this.renderIcon('fa-smile', '😊', 'رموز تعبيرية') : 
+                ${this.useEmojiIcons ?
+                  this.renderIcon('fa-smile', '😊', 'رموز تعبيرية') :
                   this.renderIcon('fa-icons', '🎨', 'أيقونات')
                 }
               </button>
               <button class="dark-mode-toggle" @click=${this.toggleDarkMode} title="تبديل الوضع المظلم">
-                ${this.isDarkMode ? 
-                  this.renderIcon('fa-sun', '☀️', 'وضع فاتح') : 
+                ${this.isDarkMode ?
+                  this.renderIcon('fa-sun', '☀️', 'وضع فاتح') :
                   this.renderIcon('fa-moon', '🌙', 'وضع مظلم')
                 }
               </button>
@@ -1623,9 +1623,9 @@ export class RadioPlayer extends LitElement {
               <span class="station-count" aria-live="polite">${visibleStations.length} / ${radioStations.length}</span>
             </div>
             <div class="test-section">
-              <button 
+              <button
                 class="test-audio-btn"
-                style=${this.testButtonState === 'success' ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%)' : 
+                style=${this.testButtonState === 'success' ? 'background: linear-gradient(135deg, #28a745 0%, #20c997 100%)' :
                        this.testButtonState === 'failed' ? 'background: linear-gradient(135deg, #dc3545 0%, #c82333 100%)' : ''}
                 @click=${this.handleTestAudio}
               >
@@ -1635,7 +1635,7 @@ export class RadioPlayer extends LitElement {
             </div>
             <div class="stations-grid">
               ${visibleStations.length === 0 ? html`<p class="test-info">لا توجد محطات مطابقة</p>` : visibleStations.map(station => html`
-                <div 
+                <div
                   class="station-card ${this.radioState.currentStation?.id === station.id ? 'active' : ''}"
                   role="group"
                 >
@@ -1681,11 +1681,11 @@ export class RadioPlayer extends LitElement {
             <div class="fixed-player-controls">
               <div class="volume-control">
                 ${this.renderIcon('fa-volume-down', '🔉', 'صوت منخفض')}
-                <input 
-                  type="range" 
+                <input
+                  type="range"
                   class="volume-slider"
-                  min="0" 
-                  max="100" 
+                  min="0"
+                  max="100"
                   .value=${this.radioState.volume.toString()}
                   @input=${this.handleVolumeChange}
                 >
@@ -1695,8 +1695,8 @@ export class RadioPlayer extends LitElement {
                 ?disabled=${!this.radioState.currentStation}
                 @click=${this.handlePlayPause}
               >
-                ${this.radioState.isPlaying ? 
-                  this.renderIcon('fa-pause', '⏸️', 'إيقاف') : 
+                ${this.radioState.isPlaying ?
+                  this.renderIcon('fa-pause', '⏸️', 'إيقاف') :
                   this.renderIcon('fa-play', '▶️', 'تشغيل')
                 }
               </button>
