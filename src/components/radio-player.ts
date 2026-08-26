@@ -535,37 +535,6 @@ export class RadioPlayer extends LitElement {
       direction: ltr;
     }
 
-    .test-section {
-      text-align: center;
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    }
-
-    .test-audio-btn {
-      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .test-audio-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
-    }
-
     .test-info {
       font-size: 0.8rem;
       color: #6c757d;
@@ -885,10 +854,6 @@ export class RadioPlayer extends LitElement {
       color: #b0b0b0;
     }
 
-    :host(.dark-mode) .test-section {
-      background: #3a3a3a;
-    }
-
     :host(.dark-mode) .test-info {
       color: #b0b0b0;
     }
@@ -1120,9 +1085,6 @@ export class RadioPlayer extends LitElement {
   };
 
   @state()
-  private testButtonState: 'idle' | 'testing' | 'success' | 'failed' = 'idle';
-
-  @state()
   private isDarkMode: boolean = false;
 
   @state()
@@ -1268,24 +1230,6 @@ export class RadioPlayer extends LitElement {
     return matchingStations.sort((firstStation, secondStation) => {
       return Number(this.isFavorite(secondStation.id)) - Number(this.isFavorite(firstStation.id));
     });
-  }
-
-  private async handleTestAudio() {
-    this.testButtonState = 'testing';
-
-    try {
-      const success = await this.radioService.testAudio();
-      this.testButtonState = success ? 'success' : 'failed';
-
-      setTimeout(() => {
-        this.testButtonState = 'idle';
-      }, 2000);
-    } catch (error) {
-      this.testButtonState = 'failed';
-      setTimeout(() => {
-        this.testButtonState = 'idle';
-      }, 3000);
-    }
   }
 
   private toggleDarkMode() {
@@ -1538,19 +1482,6 @@ export class RadioPlayer extends LitElement {
     }
   }
 
-  private getTestButtonContent() {
-    switch (this.testButtonState) {
-      case 'testing':
-        return html`<i class="fas fa-spinner fa-spin"></i> جاري الاختبار...`;
-      case 'success':
-        return html`<i class="fas fa-check"></i> الصوت يعمل!`;
-      case 'failed':
-        return html`<i class="fas fa-times"></i> فشل الاختبار`;
-      default:
-        return html`<i class="fas fa-vial"></i> اختبار الصوت`;
-    }
-  }
-
   private renderStationIcon(station: RadioStation) {
     // Try to render emoji first, with FontAwesome fallback
     return html`
@@ -1621,7 +1552,6 @@ export class RadioPlayer extends LitElement {
               </label>
               <span class="station-count" aria-live="polite">${visibleStations.length} / ${radioStations.length}</span>
             </div>
-
             <div class="stations-grid">
               ${visibleStations.length === 0 ? html`<p class="test-info">لا توجد محطات مطابقة</p>` : visibleStations.map(station => html`
                 <div
