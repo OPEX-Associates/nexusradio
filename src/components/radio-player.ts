@@ -282,6 +282,18 @@ export class RadioPlayer extends LitElement {
       line-height: 1;
     }
 
+    .station-logo-image {
+      width: 72%;
+      height: 72%;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .station-logo-image + .emoji-icon {
+      display: none;
+    }
+
     .station-logo .icon-fallback {
       font-size: 1.5rem;
       font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Pro', 'Font Awesome 5 Free', sans-serif;
@@ -1483,8 +1495,16 @@ export class RadioPlayer extends LitElement {
   }
 
   private renderStationIcon(station: RadioStation) {
-    // Try to render emoji first, with FontAwesome fallback
     return html`
+      ${station.logoUrl ? html`
+        <img
+          class="station-logo-image"
+          src=${station.logoUrl}
+          alt=""
+          loading="lazy"
+          @error=${(event: Event) => (event.currentTarget as HTMLImageElement).remove()}
+        >
+      ` : ''}
       <span class="emoji-icon">${station.logo}</span>
       ${station.iconClass ? html`<i class="icon-fallback ${station.iconClass}" style="display: none;"></i>` : ''}
     `;
