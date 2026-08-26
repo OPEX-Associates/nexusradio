@@ -105,45 +105,21 @@ export class RadioService extends EventTarget {
     
     try {
       this.updateState({ isLoading: true, error: null });
-      
-      // Stop current audio
-      this.audioPlayer.pause();
-      this.audioPlayer.currentTime = 0;
-      this.audioPlayer.src = '';
-      
-      // For Chaine Inter, try multiple URLs due to streaming issues
-      if (this.state.currentStation.id === 'snrt_inter') {
-        await this.tryMultipleUrls();
-      } else {
-        // Try primary URL first for other stations
-        await this.tryPlayUrl(this.state.currentStation.url);
-      }
-      
+
+      await this.tryMultipleUrls();
     } catch (error) {
-      console.error('Primary URL failed:', error);
-      
-      // Try fallback URL if available
-      if (this.state.currentStation.fallbackUrl) {
-        try {
-          console.log('Trying fallback URL...');
-          await this.tryPlayUrl(this.state.currentStation.fallbackUrl);
-        } catch (fallbackError) {
-          console.error('Fallback URL also failed:', fallbackError);
-          this.handlePlayError();
-        }
-      } else {
-        this.handlePlayError();
-      }
+      console.error('All station URLs failed:', error);
+      this.handlePlayError();
     }
   }
 
   private async tryMultipleUrls(): Promise<void> {
     const station = this.state.currentStation!;
-    const allUrls = [
+    const allUrls = Array.from(new Set([
       station.url,
       ...(station.alternativeUrls || []),
       ...(station.fallbackUrl ? [station.fallbackUrl] : [])
-    ];
+    ]));
 
     console.log(`Trying ${allUrls.length} URLs for ${station.name}...`);
 
@@ -169,6 +145,7 @@ export class RadioService extends EventTarget {
   private async tryPlayUrl(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const audio = this.audioPlayer;
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
       
       const onCanPlay = () => {
         cleanup();
@@ -186,7 +163,12 @@ export class RadioService extends EventTarget {
       const cleanup = () => {
         audio.removeEventListener('canplay', onCanPlay);
         audio.removeEventListener('error', onError);
+        if (timeoutId) clearTimeout(timeoutId);
       };
+
+      audio.pause();
+      audio.currentTime = 0;
+      audio.src = '';
       
       // Add temporary event listeners
       audio.addEventListener('canplay', onCanPlay, { once: true });
@@ -197,7 +179,7 @@ export class RadioService extends EventTarget {
       audio.load();
       
       // Timeout after 15 seconds
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         cleanup();
         reject(new Error('Connection timeout'));
       }, 15000);
@@ -348,8 +330,7 @@ export const radioStations: RadioStation[] = [
     id: 'atlantic_radio',
     name: 'راديو أطلنطيك',
     nameEn: 'Atlantic Radio',
-    url: 'https://atlantic-radio.ice.infomaniak.ch/atlantic-radio-128.mp3',
-    fallbackUrl: 'https://str0.creacast.com/atlantic',
+    url: 'https://atlantic-sonic.nindohost.net:9300/stream',
     logo: '🌊',
     iconClass: 'fas fa-wave-square',
     description: 'راديو أطلنطيك من المغرب • Atlantic Radio Morocco'
@@ -393,8 +374,7 @@ export const radioStations: RadioStation[] = [
     id: 'radio_mars',
     name: 'راديو مارس',
     nameEn: 'Radio Mars',
-    url: 'https://stream.radiojar.com/radiomars',
-    fallbackUrl: 'https://mars.ice.infomaniak.ch/mars-128.mp3',
+    url: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3',
     logo: '🔴',
     iconClass: 'fas fa-globe-africa',
     description: 'راديو مارس المغربي • Mars Radio Morocco'
@@ -405,8 +385,7 @@ export const radioStations: RadioStation[] = [
     id: 'rtl_france',
     name: 'آر تي إل فرنسا',
     nameEn: 'RTL France',
-    url: 'https://streaming.radio.rtl.fr/rtl-1-44-128',
-    fallbackUrl: 'https://rtl.ice.infomaniak.ch/rtl-fr-high.mp3',
+    url: 'https://icecast.rtl.fr/rtl-1-44-128',
     logo: '🇫🇷',
     iconClass: 'fas fa-tower-broadcast',
     description: 'راديو آر تي إل الفرنسي • French RTL Radio'
@@ -478,10 +457,24 @@ export const radioStations: RadioStation[] = [
     name: 'راديو 24 الأخبار',
     nameEn: 'Radio 24 News',
     url: 'https://ilsole24ore-radio.akamaized.net/hls/live/2035106/radio24/index.m3u8',
-    fallbackUrl: 'https://radio24.ilsole24ore.com/radio24.mp3',
+    alternativeUrls: [
+      'http://shoutcast2.radio24.it:8000/;',
+      'http://shoutcast.radio24.it:8000/'
+    ],
     logo: '⏰',
     iconClass: 'fas fa-clock',
     description: 'أخبار على مدار الساعة • 24/7 News Coverage'
+  },
+
+  // Additional Moroccan Radio Stations
+  {
+    id: 'med_radio',
+    name: 'ميد راديو',
+    nameEn: 'Med Radio',
+    url: 'https://medradio.ice.infomaniak.ch/medradio-128.mp3',
+    logo: '🎙️',
+    iconClass: 'fas fa-microphone-lines',
+    description: 'صوت مغربي قريب من الناس • Moroccan Talk Radio'
   },
 
   // Music & Entertainment

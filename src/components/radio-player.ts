@@ -493,6 +493,48 @@ export class RadioPlayer extends LitElement {
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
+    .station-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .station-search {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex: 1;
+      min-width: 0;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #6c757d;
+    }
+
+    .station-search input {
+      width: 100%;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #2c3e50;
+      font: inherit;
+    }
+
+    .station-search input::placeholder {
+      color: #7f8c8d;
+    }
+
+    .station-count {
+      flex-shrink: 0;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      direction: ltr;
+    }
+
     .test-section {
       text-align: center;
       margin-bottom: 2rem;
@@ -548,6 +590,48 @@ export class RadioPlayer extends LitElement {
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       position: relative;
       overflow: hidden;
+    }
+
+    .favorite-btn {
+      position: absolute;
+      top: 0.65rem;
+      left: 0.65rem;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.72);
+      color: #7f8c8d;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .station-select {
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .station-select:focus-visible,
+    .favorite-btn:focus-visible {
+      outline: 3px solid #ffd700;
+      outline-offset: 3px;
+    }
+
+    .favorite-btn:hover,
+    .favorite-btn.active {
+      color: #c41e3a;
+      background: white;
+    }
+
+    .station-card.active .favorite-btn {
+      color: #c41e3a;
     }
 
     .station-card::before {
@@ -788,6 +872,19 @@ export class RadioPlayer extends LitElement {
       color: #ffffff;
     }
 
+    :host(.dark-mode) .station-search {
+      background: #3a3a3a;
+      border-color: #4a4a4a;
+    }
+
+    :host(.dark-mode) .station-search input {
+      color: #ffffff;
+    }
+
+    :host(.dark-mode) .station-search input::placeholder {
+      color: #b0b0b0;
+    }
+
     :host(.dark-mode) .test-section {
       background: #3a3a3a;
     }
@@ -821,6 +918,17 @@ export class RadioPlayer extends LitElement {
 
     :host(.dark-mode) .station-card p {
       color: #b0b0b0;
+    }
+
+    :host(.dark-mode) .favorite-btn {
+      background: #2d2d2d;
+      color: #b0b0b0;
+    }
+
+    :host(.dark-mode) .favorite-btn:hover,
+    :host(.dark-mode) .favorite-btn.active {
+      background: #ffffff;
+      color: #c41e3a;
     }
 
     :host(.dark-mode) .loading {
@@ -1026,10 +1134,18 @@ export class RadioPlayer extends LitElement {
   @state()
   private useEmojiIcons: boolean = true;
 
+  @state()
+  private stationQuery: string = '';
+
+  @state()
+  private favoriteStationIds: string[] = [];
+
   private radioService = new RadioService();
   private analytics = AnalyticsService.getInstance();
   private notifications = NotificationService.getInstance();
   private boundStateChangeHandler = this.handleStateChange.bind(this);
+  private boundKeyboardShortcutsHandler = this.handleKeyboardShortcuts.bind(this);
+  private boundVisibilityChangeHandler = this.handleVisibilityChange.bind(this);
 
   connectedCallback() {
     super.connectedCallback();
@@ -1045,11 +1161,25 @@ export class RadioPlayer extends LitElement {
     this.useEmojiIcons = savedIconPref !== 'false'; // Default to true
     this.updateIconClass();
 
+    const savedFavorites = localStorage.getItem('nexus-radio-favorites');
+    if (savedFavorites) {
+      try {
+        const parsedFavorites: unknown = JSON.parse(savedFavorites);
+        if (Array.isArray(parsedFavorites)) {
+          this.favoriteStationIds = parsedFavorites.filter(
+            (stationId): stationId is string => typeof stationId === 'string'
+          );
+        }
+      } catch {
+        this.favoriteStationIds = [];
+      }
+    }
+
     // Add keyboard shortcuts
-    document.addEventListener('keydown', this.handleKeyboardShortcuts.bind(this));
+    document.addEventListener('keydown', this.boundKeyboardShortcutsHandler);
     
     // Add visibility change handler for background playback
-    document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+    document.addEventListener('visibilitychange', this.boundVisibilityChangeHandler);
     
     // Check emoji support and enable FontAwesome fallback if needed
     this.checkEmojiSupport();
@@ -1077,8 +1207,8 @@ export class RadioPlayer extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.radioService.removeEventListener('statechange', this.boundStateChangeHandler);
-    document.removeEventListener('keydown', this.handleKeyboardShortcuts.bind(this));
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+    document.removeEventListener('keydown', this.boundKeyboardShortcutsHandler);
+    document.removeEventListener('visibilitychange', this.boundVisibilityChangeHandler);
   }
 
   private handleStateChange(event: Event) {
@@ -1086,7 +1216,7 @@ export class RadioPlayer extends LitElement {
     this.radioState = customEvent.detail;
   }
 
-  private async handleStationSelect(station: any) {
+  private async handleStationSelect(station: RadioStation) {
     try {
       await this.radioService.selectStation(station);
       this.analytics.trackStationPlay(station.name);
@@ -1105,6 +1235,39 @@ export class RadioPlayer extends LitElement {
   private handleVolumeChange(event: Event) {
     const target = event.target as HTMLInputElement;
     this.radioService.setVolume(parseInt(target.value));
+  }
+
+  private handleStationSearch(event: Event) {
+    this.stationQuery = (event.target as HTMLInputElement).value;
+  }
+
+  private isFavorite(stationId: string) {
+    return this.favoriteStationIds.includes(stationId);
+  }
+
+  private toggleFavorite(event: Event, station: RadioStation) {
+    event.stopPropagation();
+
+    if (this.isFavorite(station.id)) {
+      this.favoriteStationIds = this.favoriteStationIds.filter(id => id !== station.id);
+    } else {
+      this.favoriteStationIds = [...this.favoriteStationIds, station.id];
+    }
+
+    localStorage.setItem('nexus-radio-favorites', JSON.stringify(this.favoriteStationIds));
+    this.analytics.trackFeatureUse(`favorite_${this.isFavorite(station.id) ? 'added' : 'removed'}`);
+  }
+
+  private getVisibleStations() {
+    const query = this.stationQuery.trim().toLocaleLowerCase();
+    const matchingStations = query
+      ? radioStations.filter(station => [station.name, station.nameEn, station.description]
+        .some(value => value.toLocaleLowerCase().includes(query)))
+      : [...radioStations];
+
+    return matchingStations.sort((firstStation, secondStation) => {
+      return Number(this.isFavorite(secondStation.id)) - Number(this.isFavorite(firstStation.id));
+    });
   }
 
   private async handleTestAudio() {
@@ -1406,6 +1569,8 @@ export class RadioPlayer extends LitElement {
   }
 
   render() {
+    const visibleStations = this.getVisibleStations();
+
     return html`
       <div class="player-container ${!this.radioState.currentStation ? 'no-player' : ''}">
         <!-- Header -->
@@ -1444,6 +1609,19 @@ export class RadioPlayer extends LitElement {
           <!-- Stations List -->
           <div class="stations-section">
             <h3 class="section-title">المحطات المتاحة</h3>
+            <div class="station-toolbar">
+              <label class="station-search">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input
+                  type="search"
+                  aria-label="البحث عن محطة"
+                  placeholder="ابحث عن محطة"
+                  .value=${this.stationQuery}
+                  @input=${this.handleStationSearch}
+                >
+              </label>
+              <span class="station-count" aria-live="polite">${visibleStations.length} / ${radioStations.length}</span>
+            </div>
             <div class="test-section">
               <button 
                 class="test-audio-btn"
@@ -1456,17 +1634,29 @@ export class RadioPlayer extends LitElement {
               <p class="test-info">إذا لم تعمل المحطات، جرب اختبار الصوت أولاً</p>
             </div>
             <div class="stations-grid">
-              ${radioStations.map(station => html`
+              ${visibleStations.length === 0 ? html`<p class="test-info">لا توجد محطات مطابقة</p>` : visibleStations.map(station => html`
                 <div 
                   class="station-card ${this.radioState.currentStation?.id === station.id ? 'active' : ''}"
-                  @click=${() => this.handleStationSelect(station)}
+                  role="group"
                 >
-                  <div class="station-logo">${this.renderStationIcon(station)}</div>
-                  <h4>
-                    <div class="station-name-arabic">${station.name}</div>
-                    <div class="station-name-english">${station.nameEn}</div>
-                  </h4>
-                  <p>${station.description}</p>
+                  <button class="station-select" type="button" @click=${() => this.handleStationSelect(station)}>
+                    <div class="station-logo">${this.renderStationIcon(station)}</div>
+                    <h4>
+                      <div class="station-name-arabic">${station.name}</div>
+                      <div class="station-name-english">${station.nameEn}</div>
+                    </h4>
+                    <p>${station.description}</p>
+                  </button>
+                  <button
+                    class="favorite-btn ${this.isFavorite(station.id) ? 'active' : ''}"
+                    type="button"
+                    aria-label=${this.isFavorite(station.id) ? `إزالة ${station.nameEn} من المفضلة` : `إضافة ${station.nameEn} إلى المفضلة`}
+                    aria-pressed=${this.isFavorite(station.id)}
+                    title=${this.isFavorite(station.id) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
+                    @click=${(event: Event) => this.toggleFavorite(event, station)}
+                  >
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                  </button>
                 </div>
               `)}
             </div>

@@ -12,24 +12,42 @@ Install the PWABuilder CLI:
 
 And create a new app with this command:
 
-`pwa create`
+# Nexus Radio
 
-And start your app locally with:
+Nexus Radio is a bilingual Arabic and English progressive web app for listening to Moroccan, French, international, news, and music stations in one place. It is built with Lit, TypeScript, and Vite.
 
-`pwa start`
+## Run locally
 
-And that's it! Good luck on your Progressive Web App adventure!
+```bash
+npm install
+npm run dev
+```
 
-## More Info
+The production build is:
 
-[![Get started with the pwa-starter!](https://img.youtube.com/vi/u3pWKpmic_k/0.jpg)](https://www.youtube.com/watch?v=u3pWKpmic_k)
+```bash
+npm run build
+```
 
-With it you get an app that:
-- Has no build system to set up and no boilerplate code to add. Everything is included out of the box.
-- Has a Service Worker system using [Workbox](https://developers.google.com/web/tools/workbox/)
-- Scores close to 100 on Lighthouse out of the box
-- Has everything needed to be installable in the browser
-- Is ready to be package for the app stores using [PWABuilder](https://www.pwabuilder.com)
-- Uses the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli) which enables emulating your production environment locally, and gets you ready for deploying to Azure Static Web Apps!
+## Features
 
-and all with just a few button clicks 😊.
+- Persistent audio player with volume control and media-session support
+- Automatic retry across all declared stream URLs for a station
+- Station search across Arabic names, English names, and descriptions
+- Persistent favorites, sorted to the front of the station list
+- Keyboard shortcuts, dark mode, share support, and PWA installation assets
+
+## Stations
+
+The catalog in `src/services/radio-service.ts` currently includes Moroccan, French, international news, and music stations. The Moroccan catalog includes MFM Radio, Hit Radio, Atlantic Radio, U Radio, Aswat, SNRT Chaine Inter, Radio Mars, and Med Radio.
+
+Stream endpoints are maintained as direct browser-playable URLs where the broadcaster exposes them. The current review confirmed the direct MFM endpoint, refreshed Atlantic Radio, Radio Mars, and RTL endpoints, and added Med Radio. Radio 24's official HLS endpoint is currently access-restricted and its available MP3 fallbacks are HTTP-only, so no unverified HTTPS replacement was promoted.
+
+Stream availability can change without notice because the endpoints are operated by the stations or their streaming providers. When a station has multiple candidates, playback tries them in the order declared in the station record.
+
+## Project structure
+
+- `src/services/radio-service.ts`: station catalog and audio playback logic
+- `src/components/radio-player.ts`: player UI, search, favorites, and controls
+- `src/pages/app-home.ts`: home page composition
+- `public/`: PWA manifest, service worker, and static assets
